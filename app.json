@@ -1,0 +1,18 @@
+{
+  "expo": {
+    "name": "Lil Jr 2.0",
+    "slug": "liljr-atomic-mobile",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "dark",
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "android": {
+      "package": "com.liljr.atomicmobile"
+    },
+    "extra": {
+      "apiUrl": "https://liljr-omnibrain-production.up.railway.app"
+    }
+  }
+}
