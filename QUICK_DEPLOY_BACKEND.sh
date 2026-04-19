@@ -1,3 +1,18 @@
+#!/bin/bash
+# QUICK DEPLOY for Lil Jr Backend (FastAPI + Railway)
+
+set -e
+mkdir -p /tmp/LILJR_BACKEND && cd /tmp/LILJR_BACKEND
+
+cat > requirements.txt << 'ENDOFFILE'
+fastapi
+uvicorn
+python-dotenv
+python-multipart
+requests
+ENDOFFILE
+
+cat > server.py << 'ENDOFFILE'
 # server.py
 # Main backend for Lil Jr 2.0 Operator App
 
@@ -36,7 +51,6 @@ brain_stats = {
 @app.get("/api/")
 def health():
     return {"status": "ok"}
-
 
 # AI chat endpoint (realistic mode)
 @app.post("/api/chat")
@@ -107,10 +121,9 @@ async def voice_auth(phrase: str = Form(...)):
 def pricing():
     return {"tiers": ["Free", "Student", "Pro", "Enterprise", "Custom"]}
 
-
 # Public brain stats (mock)
-@app.getf stats():cd C:\ngrok
-    # Add additional fields as requested
+@app.get("/api/stats")
+def stats():
     return {
         "stats": brain_stats,
         "domains": 5,
@@ -129,3 +142,31 @@ def live_feed():
 
 if __name__ == "__main__":
     uvicorn.run("server:app", host="0.0.0.0", port=8001, reload=True)
+ENDOFFILE
+
+cat > .env.example << 'ENDOFFILE'
+GROQ_API_KEY=your_groq_api_key_here
+ADMIN_VOICE_PHRASE=your_admin_phrase_here
+ENDOFFILE
+
+cat > railway.json << 'ENDOFFILE'
+{
+  "build": {
+    "builder": "python"
+  },
+  "deploy": {
+    "startCommand": "uvicorn server:app --host 0.0.0.0 --port 8001"
+  }
+}
+ENDOFFILE
+
+pip install -r requirements.txt
+
+# To run locally:
+# uvicorn server:app --host 0.0.0.0 --port 8001
+# To deploy to Railway:
+# railway login && railway up
+
+echo "QUICK DEPLOY backend ready in /tmp/LILJR_BACKEND. Edit .env, then run:"
+echo "uvicorn server:app --host 0.0.0.0 --port 8001"
+echo "Or deploy to Railway with: railway login && railway up"

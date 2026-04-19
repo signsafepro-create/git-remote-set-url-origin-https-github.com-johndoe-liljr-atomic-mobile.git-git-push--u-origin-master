@@ -12,7 +12,10 @@
       "package": "com.liljr.atomicmobile"
     },
     "extra": {
-      "apiUrl": "https://liljr-omnibrain-production.up.railway.app"
+      "backendUrl": "http://192.168.2.40:8001",
+      "eas": {
+        "projectId": "101c1beb-cc4e-4908-b42d-c57ca014ee53"
+      }
     }
   }
 }

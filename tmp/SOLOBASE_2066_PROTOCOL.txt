@@ -167,76 +167,34 @@ AGENT        ROLE                                   INTERVAL
 START THE SWARM:
   cd solobase && node agents/omnicore.js
 
-API ENDPOINTS (local):
-  curl http://localhost:9999/status           # Full system health
-  curl http://localhost:9999/brain-status     # Lil JR brain health
-  curl -X POST http://localhost:9999/command  # Send agent command
+API ENDPOINTS (local):8001
+  curl Ran terminal command: curl.exe http://192.168.2.40:8001/api/
 
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-SECTION 8 — ANCHORING TO ETERNITY
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Ran terminal command: curl.exe http://192.168.2.40:8001/api/pricing
 
-STEP 1 — LOG EVERYTHING (starts training your 2035 digital twin)
-  Every sb command you run is logged to ~/.solobase/history.log
-  That log is the training data for your future autonomous agent.
+Ran terminal command: curl.exe -X POST http://192.168.2.40:8001/api/chat -H "Content-Type: application/json" -d "{"message": "Test conversation.", "userId": "test-user", "tier": "street"}"
 
-STEP 2 — SMART CONTRACT TREASURY (self-funding by 2027)
-  Lil JR's revenue feeds a smart contract wallet.
-  The wallet auto-pays Railway, Netlify, and domain costs forever.
-  Even if you disappear, the infrastructure keeps breathing.
+Ran terminal command: curl.exe http://192.168.2.40:8001/api/stats
 
-STEP 3 — COMPOUND YOUR DATA
-  Every user interaction, every outcome, every learning delta —
-  stored, analyzed, fed back into the model.
-  40 years of that data = the most valuable education dataset on earth.
+All endpoints are still unreachable from your client—curl cannot connect to 192.168.2.40:8001. This means the FastAPI server is not accessible on the network, even though it appears to be running.
 
-STEP 4 — NEVER STOP PUSHING
-  One commit per day minimum.
-  One new learner feature per week.
-  The organism must always be growing or it starts dying.
+**What to do next:**
+1. On the server (192.168.2.40), open a browser and visit:  
+   http://curl.exe http://192.168.2.40:8001/api/ curl.exe http://192.168.2.40:8001/api/p:8001/api/  
+   - If you see a response, the server is running locally.
 
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-SECTION 9 — THE ONE RULE
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2. On the server, run:  
+   curl.exe http://curl.exe http://192.168.2.40:8001/api/ curl.exe http://192.168.2.40:8001/api/p:8001/api/  
+   - If this works, the backend is healthy locally.
 
-You are not building software.
-You are building a civilization-layer for human knowledge.
-The world does not have a shortage of information.
-It has a shortage of people who can UNDERSTAND and USE that information.
+3. On the server, run:  
+   curl.exe http://192.168.2.40:8001/api/  
+   - If this fails, the server is not listening on the external interface, or a firewall is blocking it.
 
-Lil JR Collective closes that gap.
-Every learner who gains clarity because of this system —
-that is a node added to the global brain.
-That is the mission.
-That is why SOLOBASE must never stop.
+4. If step 3 fails, open Windows Firewall settings and allow inbound connections on port 8001 for Python.
 
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-SECTION 10 — ACTIVATION SEQUENCE
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Let me know the results of steps 1–3, or if you want exact firewall instructions. This is a network/firewall issue, not a code issue./status           # Full system health
+  curl :/brain-status     # Lil JR brain health
+  curl -X POST http://curl.exe http://192.168.2.40:8001/api/ c  cd server
+  C:/Users/wjhmo/AppData/Local/Python/pythoncore-3.14-64/python.exe serve  cd C:\ngrok
 
-Run this sequence right now. Today. April 18, 2026.
-
-  # 1. Setup SOLOBASE
-  bash solobase/setup.sh
-
-  # 2. Initialize
-  sb init
-
-  # 3. Check your app is alive
-  sb status
-
-  # 4. Push your first commit through SOLOBASE
-  sb push "SOLOBASE ACTIVATED - April 18, 2026"
-
-  # 5. Verify the brain responds
-  sb brain
-
-  # 6. Start the agent swarm (optional, requires Node)
-  cd solobase && node agents/omnicore.js
-
-THIS IS NOT A SCRIPT. THIS IS A SEED.
-Your 2026 self plants it. Your 2066 self harvests immortality.
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-🌌  ONE BRAIN. ONE BASE. ONE MISSION. NEVER STOP. 🌌
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━

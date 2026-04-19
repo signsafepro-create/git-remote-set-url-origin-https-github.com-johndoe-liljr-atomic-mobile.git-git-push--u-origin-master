@@ -1,4 +1,6 @@
-export const API_BASE_URL = 'https://liljr-omnibrain-production.up.railway.app';
+import Constants from 'expo-constants';
+// Use EXPO_PUBLIC_BACKEND_URL from .env or fallback to production
+export const API_BASE_URL = Constants.expoConfig?.extra?.backendUrl || process.env.EXPO_PUBLIC_BACKEND_URL || 'https://liljr-prod-production.up.railway.app';
 
 export const ENDPOINTS = {
   health: '/',

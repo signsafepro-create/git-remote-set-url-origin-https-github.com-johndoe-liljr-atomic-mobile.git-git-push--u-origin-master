@@ -1,4 +1,5 @@
-import React, { useState, useRef, useCallback } from 'react';
+import React, { useState, useRef, useCallback, useEffect } from 'react';
+import Voice from '@react-native-community/voice';
 import {
   View,
   TextInput,
@@ -28,6 +29,32 @@ export default function ChatScreen({ navigation }) {
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
   const [voiceActive, setVoiceActive] = useState(false);
+  const [realisticMode, setRealisticMode] = useState(false);
+
+  // Voice recognition handlers
+  useEffect(() => {
+    Voice.onSpeechResults = (e) => {
+      if (e.value && e.value[0]) setInput(e.value[0]);
+    };
+    Voice.onSpeechEnd = () => setVoiceActive(false);
+    return () => {
+      Voice.destroy().then(Voice.removeAllListeners);
+    };
+  }, []);
+
+  const handleVoice = async () => {
+    if (!voiceActive) {
+      try {
+        await Voice.start('en-US');
+        setVoiceActive(true);
+      } catch (e) {
+        setVoiceActive(false);
+      }
+    } else {
+      await Voice.stop();
+      setVoiceActive(false);
+    }
+  };
   const scrollViewRef = useRef(null);
 
   const scrollToBottom = useCallback(() => {
@@ -44,12 +71,17 @@ export default function ChatScreen({ navigation }) {
       timestamp: Date.now()
     };
 
+    // Add user message to local state
     setMessages((prev) => [...prev, userMsg]);
     setInput('');
     setLoading(true);
 
     try {
-      const response = await api.chat(userMsg.content, 'mobile-user', 'street');
+      // Pass a flag to the backend for realistic mode (for now, just append to message)
+      const messageToSend = realisticMode ? `[REALISTIC] ${userMsg.content}` : userMsg.content;
+      // Send last 10 messages as history for memory
+      const history = [...messages, userMsg].slice(-10).map(({ role, content }) => ({ role, content }));
+      const response = await api.chat(messageToSend, 'mobile-user', 'street', history);
       const assistantMsg = {
         id: generateId(),
         role: 'assistant',
@@ -69,7 +101,7 @@ export default function ChatScreen({ navigation }) {
       setLoading(false);
       setTimeout(scrollToBottom, 100);
     }
-  }, [input, loading, scrollToBottom]);
+  }, [input, loading, scrollToBottom, realisticMode, messages]);
 
   return (
     <KeyboardAvoidingView
@@ -78,6 +110,12 @@ export default function ChatScreen({ navigation }) {
       keyboardVerticalOffset={90}
     >
       <View style={styles.header}>
+        <TouchableOpacity
+          style={[styles.toggleButton, realisticMode && styles.toggleButtonActive]}
+          onPress={() => setRealisticMode((v) => !v)}
+        >
+          <Text style={styles.toggleButtonText}>{realisticMode ? 'Realistic ON' : 'Realistic OFF'}</Text>
+        </TouchableOpacity>
         <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
           <Text style={styles.backText}>←</Text>
         </TouchableOpacity>
@@ -106,7 +144,7 @@ export default function ChatScreen({ navigation }) {
       </ScrollView>
 
       <View style={styles.inputContainer}>
-        <VoiceButton active={voiceActive} onPress={() => setVoiceActive((v) => !v)} />
+        <VoiceButton active={voiceActive} onPress={handleVoice} />
         <TextInput
           style={styles.input}
           value={input}

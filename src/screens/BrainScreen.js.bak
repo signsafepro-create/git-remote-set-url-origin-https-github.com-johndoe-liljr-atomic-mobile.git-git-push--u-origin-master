@@ -4,11 +4,9 @@ import BrainStatus from '../components/BrainStatus';
 import { api } from '../api/client';
 import { THEME } from '../config/theme';
 
-
 export default function BrainScreen() {
   const [status, setStatus] = useState('Checking...');
   const [knowledge, setKnowledge] = useState(0);
-
 
   useEffect(() => {
     (async () => {

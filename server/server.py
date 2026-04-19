@@ -45,16 +45,6 @@ async def chat(request: Request):
     user_message = data.get("message", "")
     realistic = user_message.strip().startswith('[REALISTIC]')
     prompt = user_message.replace('[REALISTIC]', '').strip() if realistic else user_message
-    history = data.get("history", [])  # New: get conversation history
-
-    # Build conversation context for the AI
-    conversation = []
-    if history and isinstance(history, list):
-        for msg in history:
-            if msg.get('role') in ('user', 'assistant') and msg.get('content'):
-                conversation.append({"role": msg['role'], "content": msg['content']})
-    # Always add the current user message as the last entry
-    conversation.append({"role": "user", "content": prompt})
 
     if realistic:
         # Use Groq API for realistic, human-like responses
@@ -72,7 +62,7 @@ async def chat(request: Request):
                     "model": "gpt-4.0-turbo",  # or your preferred model
                     "messages": [
                         {"role": "system", "content": "You are Lil Jr, a witty, friendly, and deeply human conversationalist. Respond naturally and empathetically."},
-                        *conversation
+                        {"role": "user", "content": prompt}
                     ]
                 },
                 timeout=10
@@ -83,9 +73,8 @@ async def chat(request: Request):
         except Exception as e:
             return {"response": f"[Realistic mode error: {str(e)}]"}
     else:
-        # Default mock response with memory
-        context_str = '\n'.join([f"{m['role']}: {m['content']}" for m in conversation])
-        return {"response": f"Lil Jr says (memory):\n{context_str}"}
+        # Default mock response
+        return {"response": f"Lil Jr says: You said '{prompt}'"}
 
 # Voice-to-text (mock)
 @app.post("/api/transcribe")
@@ -108,8 +97,10 @@ def pricing():
     return {"tiers": ["Free", "Student", "Pro", "Enterprise", "Custom"]}
 
 
+
 # Public brain stats (mock)
-@app.getf stats():cd C:\ngrok
+@app.get("/api/stats")
+def stats():
     # Add additional fields as requested
     return {
         "stats": brain_stats,

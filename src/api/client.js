@@ -1,8 +1,9 @@
 import Constants from 'expo-constants';
 
 const API_URL =
-  Constants.expoConfig?.extra?.apiUrl ||
-  'https://liljr-omnibrain-production.up.railway.app';
+  Constants.expoConfig?.extra?.backendUrl ||
+  process.env.EXPO_PUBLIC_BACKEND_URL ||
+  'https://liljr-prod-production.up.railway.app';
 
 class ApiError extends Error {
   constructor(status, message) {
@@ -39,8 +40,9 @@ export const api = {
     return this.get('/');
   },
 
-  async chat(message, userId = 'mobile-user', tier = 'street') {
-    return this.post('/chat', { message, userId, tier, domain: 'mobile' });
+  // Accepts optional history array for memory
+  async chat(message, userId = 'mobile-user', tier = 'street', history = []) {
+    return this.post('/chat', { message, userId, tier, domain: 'mobile', history });
   },
 
   async createCheckout(tier, email) {
