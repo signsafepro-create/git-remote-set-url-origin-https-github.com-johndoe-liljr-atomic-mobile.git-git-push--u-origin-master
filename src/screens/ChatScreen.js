@@ -31,17 +31,53 @@ export default function ChatScreen({ navigation }) {
   const [voiceActive, setVoiceActive] = useState(false);
   const [realisticMode, setRealisticMode] = useState(false);
 
+  // Free talk mode: no wake word required
+
   // Voice recognition handlers
   useEffect(() => {
-    Voice.onSpeechResults = (e) => {
-      if (e.value && e.value[0]) setInput(e.value[0]);
+    let listening = false;
+    let stopped = false;
+
+    const startListening = async () => {
+      if (!listening && !stopped) {
+        try {
+          await Voice.start('en-US');
+          setVoiceActive(true);
+          listening = true;
+        } catch {
+          setVoiceActive(false);
+        }
+      }
     };
-    Voice.onSpeechEnd = () => setVoiceActive(false);
+
+    Voice.onSpeechResults = (e) => {
+      if (e.value && e.value[0]) {
+        const transcript = e.value[0].trim();
+        setInput(transcript);
+      }
+    };
+
+    Voice.onSpeechEnd = async () => {
+      setVoiceActive(false);
+      listening = false;
+      if (input.trim()) {
+        await sendMessage();
+        setInput('');
+      }
+      setTimeout(startListening, 500);
+    };
+
+    // Start listening on mount
+    startListening();
+
     return () => {
+      stopped = true;
       Voice.destroy().then(Voice.removeAllListeners);
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  // Voice button now toggles listening manually (optional, but always-on in free talk mode)
   const handleVoice = async () => {
     if (!voiceActive) {
       try {

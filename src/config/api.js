@@ -3,7 +3,7 @@ import Constants from 'expo-constants';
 export const API_BASE_URL = Constants.expoConfig?.extra?.backendUrl || process.env.EXPO_PUBLIC_BACKEND_URL || 'https://liljr-prod-production.up.railway.app';
 
 export const ENDPOINTS = {
-  health: '/',
+  health: '/api/',
   stats: '/stats',
   chat: '/chat',
   pricing: '/pricing',

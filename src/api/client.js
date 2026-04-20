@@ -37,7 +37,7 @@ export const api = {
   },
 
   async health() {
-    return this.get('/');
+    return this.get('/api/');
   },
 
   // Accepts optional history array for memory

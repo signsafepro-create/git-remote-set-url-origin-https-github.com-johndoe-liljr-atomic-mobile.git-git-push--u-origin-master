@@ -1,4 +1,5 @@
 import React from 'react';
+
 import { StatusBar } from 'expo-status-bar';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
@@ -8,6 +9,7 @@ import DashboardScreen from './src/screens/DashboardScreen';
 import SignSafeScreen from './src/screens/SignSafeScreen';
 import AppNavigator from './src/navigation/AppNavigator';
 import OneBrainHandoffScreen from './src/screens/OneBrainHandoffScreen';
+import NotFoundScreen from './src/screens/NotFoundScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -29,7 +31,25 @@ export default function App() {
         <Stack.Screen name="Dashboard" component={DashboardScreen} />
         <Stack.Screen name="SignSafe" component={SignSafeScreen} />
         <Stack.Screen name="OneBrainHandoff" component={OneBrainHandoffScreen} />
+        <Stack.Screen name="NotFound" component={NotFoundScreen} options={{ title: '404' }} />
       </Stack.Navigator>
+    // Handle undefined routes for web
+    export const linking = {
+      prefixes: [],
+      config: {
+        screens: {
+          Splash: 'splash',
+          Home: 'home',
+          Main: 'main',
+          Dashboard: 'dashboard',
+          SignSafe: 'signsafe',
+          OneBrainHandoff: 'onebrainhandoff',
+          NotFound: '*',
+        },
+      },
+    };
+
+    // Use linking prop in NavigationContainer
     </NavigationContainer>
   );
 }

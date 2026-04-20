@@ -9,7 +9,6 @@ export default function BrainScreen() {
   const [status, setStatus] = useState('Checking...');
   const [knowledge, setKnowledge] = useState(0);
 
-
   useEffect(() => {
     (async () => {
       try {
@@ -23,14 +22,42 @@ export default function BrainScreen() {
   }, []);
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Brain</Text>
-      <BrainStatus status={status} knowledge={knowledge} />
+    <View style={styles.outer}>
+      <View style={styles.container}>
+        <Text style={styles.title}>Brain</Text>
+        <BrainStatus status={status} knowledge={knowledge} />
+      </View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: THEME.background, padding: 16, paddingTop: 56 },
-  title: { color: THEME.text, fontSize: 24, fontWeight: '800', marginBottom: 12 }
+  outer: {
+    flex: 1,
+    backgroundColor: THEME.background,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 0
+  },
+  container: {
+    width: '95%',
+    maxWidth: 420,
+    backgroundColor: THEME.background,
+    borderRadius: 18,
+    padding: 24,
+    paddingTop: 48,
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.08,
+    shadowRadius: 8,
+    elevation: 2
+  },
+  title: {
+    color: THEME.text,
+    fontSize: 28,
+    fontWeight: '800',
+    marginBottom: 18,
+    letterSpacing: 1.2
+  }
 });

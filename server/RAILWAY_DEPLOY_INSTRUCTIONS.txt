@@ -1,0 +1,19 @@
+# Lil Jr 2.0 Backend Railway Deployment Instructions
+
+1. Go to https://railway.app and log in (or create an account).
+2. Click "New Project" > "Deploy from GitHub repo" (or "Deploy from Template" if you want to upload files directly).
+3. If uploading files directly:
+   - Click "Blank Project".
+   - Drag and drop these two files:
+     - server/server.py
+     - server/requirements.txt
+4. Set the Start Command to:
+   python server.py
+5. Set the Port to 8000 (or 8001 if you prefer).
+6. Add any required environment variables (e.g., GROQ_API_KEY) in the Railway dashboard under "Variables".
+7. Click "Deploy". Railway will give you a public backend URL (e.g., https://your-backend.up.railway.app).
+8. Share that URL here so I can update your mobile app to use it.
+
+If you want to deploy from GitHub, push your backend code to a public repo and connect it in Railway.
+
+Let me know when you have the backend URL, or if you want step-by-step screenshots or help with the Railway UI!

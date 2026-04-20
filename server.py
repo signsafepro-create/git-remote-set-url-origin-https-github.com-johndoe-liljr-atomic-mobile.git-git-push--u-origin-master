@@ -108,8 +108,10 @@ def pricing():
     return {"tiers": ["Free", "Student", "Pro", "Enterprise", "Custom"]}
 
 
+
 # Public brain stats (mock)
-@app.getf stats():cd C:\ngrok
+@app.get("/api/stats")
+def public_stats():
     # Add additional fields as requested
     return {
         "stats": brain_stats,

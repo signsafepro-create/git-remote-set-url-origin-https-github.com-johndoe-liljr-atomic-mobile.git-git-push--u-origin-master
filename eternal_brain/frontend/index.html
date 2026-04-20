@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Eternal Brain - Living Cell Visualization</title>
+    <link rel="stylesheet" href="css/eternal.css">
+</head>
+<body>
+    <div id="universe">
+        <!-- Background flowing particles -->
+        <canvas id="river-canvas"></canvas>
+        
+        <!-- HUD -->
+        <div id="hud">
+            <div id="pulse-monitor">
+                <div class="heartbeat-line"></div>
+                <span id="bpm-display">60 BPM</span>
+                <span id="pulse-count">Pulse: 0</span>
+            </div>
+            
+            <div id="population-stats">
+                <div class="stat">
+                    <label>Living</label>
+                    <span id="living-count">0</span>
+                </div>
+                <div class="stat">
+                    <label>Remembered</label>
+                    <span id="dead-count">0</span>
+                </div>
+                <div class="stat">
+                    <label>Generation</label>
+                    <span id="gen-count">0</span>
+                </div>
+                <div class="stat">
+                    <label>Vitality</label>
+                    <span id="vitality-avg">0%</span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Cell Visualization Container -->
+        <div id="cell-universe"></div>
+        
+        <!-- Phase Legend -->
+        <div id="phase-legend">
+            <div class="phase" data-phase="STEM"><span class="dot dot-stem"></span>STEM</div>
+            <div class="phase" data-phase="BLOOM"><span class="dot dot-bloom"></span>BLOOM</div>
+            <div class="phase" data-phase="BURN"><span class="dot dot-burn"></span>BURN</div>
+            <div class="phase" data-phase="SENESCE"><span class="dot dot-senesce"></span>SENESCE</div>
+            <div class="phase" data-phase="CRISIS"><span class="dot dot-crisis"></span>CRISIS</div>
+            <div class="phase" data-phase="RENEW"><span class="dot dot-renew"></span>RENEW</div>
+        </div>
+        
+        <!-- Command Interface -->
+        <div id="command-terminal">
+            <div id="terminal-output"></div>
+            <input type="text" id="command-input" placeholder="invoke calculator 5 3 add | seed mycell 'def main():...' | bpm 120">
+        </div>
+
+        <!-- Brain Thoughts/Planner Panel -->
+        <div id="planner-panel">
+            <h3>🧠 Eternal Brain Thoughts</h3>
+            <div id="planner-active">
+                <b>Active Plans:</b>
+                <ul id="active-plans-list"></ul>
+            </div>
+            <div id="planner-history">
+                <b>Executed Plans:</b>
+                <ul id="history-plans-list"></ul>
+            </div>
+        </div>
+        
+        <!-- Selected Cell Detail -->
+        <div id="cell-detail" class="hidden">
+            <h3 id="detail-name">Cell Name</h3>
+            <div id="detail-stats"></div>
+            <div id="detail-wisdom"></div>
+            <button id="force-evolve">Force Evolution</button>
+            <button id="close-detail">Close</button>
+        </div>
+    </div>
+    
+    <script src="js/cells.js"></script>
+    <script src="js/bloodstream.js"></script>
+    <script src="js/brain.js"></script>
+</body>
+</html>

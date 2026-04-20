@@ -1,13 +1,40 @@
-import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+
+import React, { useCallback, useState } from 'react';
+import { View, Text, TouchableOpacity, StyleSheet, Alert } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
+import VoiceService from '../components/VoiceService';
+
 
 export default function HomeScreen({ navigation }) {
+  const [lastCommand, setLastCommand] = useState('');
+
+  const handleVoiceCommand = useCallback((cmd) => {
+    setLastCommand(cmd);
+    // Example: Navigate to Chat on wake word or send command to backend
+    if (cmd && cmd.toLowerCase().includes('wake word')) {
+      navigation.navigate('Main', { screen: 'Chat' });
+    } else if (cmd && cmd.trim().length > 0) {
+      // You can send the command to your backend here
+      Alert.alert('Voice Command', cmd);
+    }
+  }, [navigation]);
+
+  const handlePrivacy = useCallback((msg) => {
+    setLastCommand('Privacy mode activated');
+    Alert.alert('Privacy', 'Listening stopped.');
+  }, []);
+
   return (
     <View style={styles.container}>
       <Text style={styles.logo}>LIL JR 2.0</Text>
       <Text style={styles.tagline}>Your autonomous best friend.</Text>
       <Text style={styles.tagline2}>Never sleeps. Never forgets. Always hustles.</Text>
+
+      {/* Always-on VoiceService */}
+      <VoiceService onCommand={handleVoiceCommand} onPrivacy={handlePrivacy} />
+      {lastCommand ? (
+        <Text style={{ color: '#0f0', marginBottom: 8 }}>Last: {lastCommand}</Text>
+      ) : null}
 
       <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Main', { screen: 'Chat' })}>
         <LinearGradient colors={['#b829dd', '#00f0ff']} style={styles.gradient}>
