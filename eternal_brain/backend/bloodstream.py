@@ -1,4 +1,6 @@
-npx expo eject"""
+git remote set-url origin https://github.com/<your-username>/<your-repo>.git
+
+npx expo ejectgit push -u origin mastergit push -u origin mastergit push -u origin master"""
 BLOODSTREAM - The flowing medium of eternal cells
 Never depleted. Always renewing. Remembers all.
 """
