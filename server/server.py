@@ -91,6 +91,43 @@ async def voice_auth(phrase: str = Form(...)):
         return {"auth": True}
     return {"auth": False}
 
+# Owner unlock endpoint (passphrase or voice)
+from fastapi import Response
+import secrets
+import time
+OWNER_SESSIONS = {}
+
+@app.post("/api/owner-unlock")
+async def owner_unlock(request: Request):
+    """
+    Unlocks owner (God mode) with passphrase or voice. Returns a session token.
+    Set OWNER_PASSPHRASE in .env for passphrase unlock.
+    """
+    data = await request.json()
+    passphrase = data.get("passphrase", "")
+    voice = data.get("voice", "")
+    owner_pass = os.getenv("OWNER_PASSPHRASE", "")
+    admin_phrase = os.getenv("ADMIN_VOICE_PHRASE", "")
+    if (owner_pass and passphrase.strip() == owner_pass.strip()) or (admin_phrase and voice.strip().lower() == admin_phrase.strip().lower()):
+        # Generate session token
+        token = secrets.token_urlsafe(32)
+        OWNER_SESSIONS[token] = int(time.time())
+        return {"unlocked": True, "token": token}
+    return {"unlocked": False}
+
+@app.post("/api/owner-verify")
+async def owner_verify(request: Request):
+    """
+    Verifies owner session token for God mode access.
+    """
+    data = await request.json()
+    token = data.get("token", "")
+    # Session valid for 24h
+    now = int(time.time())
+    if token in OWNER_SESSIONS and now - OWNER_SESSIONS[token] < 86400:
+        return {"valid": True}
+    return {"valid": False}
+
 # Pricing tiers (mock)
 @app.get("/api/pricing")
 def pricing():
@@ -117,6 +154,32 @@ def admin_stats():
 @app.get("/api/admin/live-feed")
 def live_feed():
     return StreamingResponse(io.StringIO("Live data stream..."), media_type="text/plain")
+
+# Ultra-open: Open-source model chat endpoint
+@app.post("/api/openchat")
+async def openchat(request: Request):
+    """
+    Forwards chat to a self-hosted open-source model (e.g., llama.cpp, vLLM, etc.).
+    Set OPENCHAT_API_URL in your .env to the model's API endpoint (e.g., http://localhost:8002/v1/chat/completions)
+    """
+    data = await request.json()
+    user_message = data.get("message", "")
+    history = data.get("history", [])
+    openchat_url = os.getenv("OPENCHAT_API_URL", "http://localhost:8002/v1/chat/completions")
+    try:
+        payload = {
+            "model": os.getenv("OPENCHAT_MODEL", "llama-2-7b-chat"),
+            "messages": history + [{"role": "user", "content": user_message}],
+            "temperature": data.get("temperature", 0.7),
+            "max_tokens": data.get("max_tokens", 512)
+        }
+        resp = requests.post(openchat_url, json=payload, timeout=30)
+        resp.raise_for_status()
+        result = resp.json()
+        reply = result.get("choices", [{}])[0].get("message", {}).get("content", "").strip()
+        return {"response": reply or "[No response from open model]"}
+    except Exception as e:
+        return {"response": f"[Open model error: {str(e)}]"}
 
 if __name__ == "__main__":
     uvicorn.run("server:app", host="0.0.0.0", port=8001, reload=True)

@@ -1,0 +1,21 @@
+{
+  "name": "flowing-mind-backend",
+  "version": "1.0.0",
+  "description": "Lil Jr 2.0 - The Flowing Mind",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "nodemon server.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "pg": "^8.11.0",
+    "stripe": "^12.0.0",
+    "groq-sdk": "^0.3.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.0.3"
+  },
+  "engines": {
+    "node": ">=16.0.0"
+  }
+}

@@ -1,3 +1,6 @@
 {
-    "python-envs.defaultEnvManager": "ms-python.python:system"
+    "python-envs.defaultEnvManager": "ms-python.python:system",
+    "terminal.integrated.commandsToSkipShell": [
+        "https://github.com/signsafepro-create/git-remote-set-url-origin-https-github.com-johndoe-liljr-atomic-mobile.git-git-push--u-origin-master/blob/20a3f7f630bc846d9b2f500d50adf6dc96560463/App.js"
+    ]
 }
