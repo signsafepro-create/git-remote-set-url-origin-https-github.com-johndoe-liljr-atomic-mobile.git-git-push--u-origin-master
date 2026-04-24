@@ -1,9 +1,7 @@
 import Constants from 'expo-constants';
 
 const API_URL =
-  Constants.expoConfig?.extra?.backendUrl ||
-  process.env.EXPO_PUBLIC_BACKEND_URL ||
-  'https://liljr-prod-production.up.railway.app';
+  'https://liljr-prod-production.up.railway.app'; // Railway only, no Vercel/Netlify/localhost
 
 class ApiError extends Error {
   constructor(status, message) {

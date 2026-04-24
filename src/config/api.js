@@ -1,6 +1,6 @@
 
 // Set your Railway backend URL here
-export const API_BASE_URL = 'https://liljr-prod-production.up.railway.app';
+export const API_BASE_URL = 'https://liljr-prod-production.up.railway.app'; // Railway only
 
 export const ENDPOINTS = {
   health: '/api/',

@@ -614,6 +614,19 @@ app.get('/health', (req, res) => {
   });
 });
 
+// --- ADDED: /mobile-scan endpoint for Railway ---
+app.post('/mobile-scan', async (req, res) => {
+  // Accepts: { data: string, user_id?: string }
+  const { data, user_id } = req.body;
+  // For demo: just echo back, but you can add logic here
+  res.json({
+    status: 'ok',
+    received: data,
+    user: user_id || 'anonymous',
+    message: 'Scan received and processed.'
+  });
+});
+
 initDB().then(() => {
   const PORT = process.env.PORT || 3000;
   app.listen(PORT, () => {
