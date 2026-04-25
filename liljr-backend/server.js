@@ -4,6 +4,7 @@ const cors = require('cors');
 const { Pool } = require('pg');
 // Stripe removed for personal build
 const Groq = require('groq-sdk');
+const { checkHealth } = require('./watchdog');
 
 const app = express();
 app.use(cors());
@@ -622,4 +623,6 @@ initDB().then(() => {
   app.listen(PORT, () => {
     console.log('Flowing Mind Online on port ' + PORT);
   });
+  // Start self-monitoring watchdog
+  checkHealth();
 });
