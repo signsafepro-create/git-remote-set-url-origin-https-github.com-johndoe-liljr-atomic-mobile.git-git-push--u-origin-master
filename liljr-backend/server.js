@@ -501,7 +501,11 @@ app.post('/flow/touch', async (req, res) => {
 });
 
 app.get('/flow/dreaming', async (req, res) => {
-  if (req.headers['x-architect-key'] !== process.env.ARCHITECT_SECRET) {
+  const ownerUnlock = req.headers['x-owner-unlock'] === process.env.OWNER_UNLOCK_PHRASE;
+  if (
+    req.headers['x-architect-key'] !== process.env.ARCHITECT_SECRET &&
+    !ownerUnlock
+  ) {
     return res.status(403).json({ locked: true });
   }
 
@@ -527,7 +531,11 @@ app.get('/flow/dreaming', async (req, res) => {
 });
 
 app.post('/architect/add-thing', async (req, res) => {
-  if (req.headers['x-architect-key'] !== process.env.ARCHITECT_SECRET) {
+  const ownerUnlock = req.headers['x-owner-unlock'] === process.env.OWNER_UNLOCK_PHRASE;
+  if (
+    req.headers['x-architect-key'] !== process.env.ARCHITECT_SECRET &&
+    !ownerUnlock
+  ) {
     return res.status(403).json({ error: 'Unauthorized' });
   }
 
@@ -542,7 +550,11 @@ app.post('/architect/add-thing', async (req, res) => {
 });
 
 app.post('/architect/add-helper', async (req, res) => {
-  if (req.headers['x-architect-key'] !== process.env.ARCHITECT_SECRET) {
+  const ownerUnlock = req.headers['x-owner-unlock'] === process.env.OWNER_UNLOCK_PHRASE;
+  if (
+    req.headers['x-architect-key'] !== process.env.ARCHITECT_SECRET &&
+    !ownerUnlock
+  ) {
     return res.status(403).json({ error: 'Unauthorized' });
   }
 
