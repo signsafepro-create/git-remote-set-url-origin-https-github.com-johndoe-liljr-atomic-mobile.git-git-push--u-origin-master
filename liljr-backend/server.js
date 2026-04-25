@@ -2,7 +2,7 @@ require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const { Pool } = require('pg');
-const Stripe = require('stripe');
+// Stripe removed for personal build
 const Groq = require('groq-sdk');
 
 const app = express();
@@ -78,7 +78,6 @@ const initDB = async () => {
 class FlowingMind {
   constructor() {
     this.groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
-    this.stripe = Stripe(process.env.STRIPE_SECRET_KEY);
     this.here = { name: 'Sault Ste. Marie', code: 'P6B 3P8', reach: 50 };
     this.alerts = [];
   }
@@ -557,28 +556,7 @@ app.post('/architect/add-helper', async (req, res) => {
   res.json({ added: true, name, service_type });
 });
 
-app.post('/create-payment-intent', async (req, res) => {
-  const { amount, soul_id, items } = req.body;
-
-  try {
-    const paymentIntent = await mind.stripe.paymentIntents.create({
-      amount: Math.round(amount * 100),
-      currency: 'cad',
-      metadata: {
-        soul_id,
-        items: JSON.stringify(items),
-        location: 'Sault Ste. Marie'
-      }
-    });
-
-    res.json({
-      client_secret: paymentIntent.client_secret,
-      payment_intent_id: paymentIntent.id
-    });
-  } catch (error) {
-    res.status(400).json({ error: error.message });
-  }
-});
+// Stripe payment endpoint removed for personal build
 
 app.post('/teach', async (req, res) => {
   const { topic, question } = req.body;
