@@ -12,9 +12,16 @@ import uvicorn
 import requests
 from fastapi import APIRouter
 import subprocess
+import json
+from datetime import datetime
 
 # Load environment variables
 load_dotenv()
+
+
+# Persistent memory file
+MEMORY_FILE = "liljr_memory.jsonl"
+KNOWLEDGE_FILE = "liljr_knowledge.json"
 
 app = FastAPI()
 
@@ -52,6 +59,32 @@ async def write_code(request: Request):
     return {"status": "success", "filename": filename}
 
 
+
+# --- Persistent Memory and Learning Loop ---
+def log_interaction(user_message, response, context=None):
+    entry = {
+        "timestamp": datetime.utcnow().isoformat(),
+        "user_message": user_message,
+        "response": response,
+        "context": context or {}
+    }
+    with open(MEMORY_FILE, "a", encoding="utf-8") as f:
+        f.write(json.dumps(entry) + "\n")
+
+def update_knowledge(user_message, response):
+    # Simple example: store Q&A pairs
+    try:
+        if os.path.exists(KNOWLEDGE_FILE):
+            with open(KNOWLEDGE_FILE, "r", encoding="utf-8") as f:
+                kb = json.load(f)
+        else:
+            kb = {}
+        kb[user_message] = response
+        with open(KNOWLEDGE_FILE, "w", encoding="utf-8") as f:
+            json.dump(kb, f, ensure_ascii=False, indent=2)
+    except Exception as e:
+        pass  # Don't crash on knowledge update
+
 # AI chat endpoint (realistic mode)
 @app.post("/api/chat")
 async def chat(request: Request):
@@ -74,7 +107,10 @@ async def chat(request: Request):
         # Use Groq API for realistic, human-like responses
         groq_key = os.getenv('GROQ_API_KEY', '')
         if not groq_key:
-            return {"response": "[Realistic mode unavailable: GROQ_API_KEY not set]"}
+            response = "[Realistic mode unavailable: GROQ_API_KEY not set]"
+            log_interaction(user_message, response, {"history": history})
+            update_knowledge(user_message, response)
+            return {"response": response}
         try:
             groq_response = requests.post(
                 "https://api.groq.com/openai/v1/chat/completions",
@@ -93,13 +129,21 @@ async def chat(request: Request):
             )
             groq_data = groq_response.json()
             reply = groq_data.get('choices', [{}])[0].get('message', {}).get('content', '').strip()
+            log_interaction(user_message, reply, {"history": history})
+            update_knowledge(user_message, reply)
             return {"response": reply or "[No response from Groq AI]"}
         except Exception as e:
-            return {"response": f"[Realistic mode error: {str(e)}]"}
+            response = f"[Realistic mode error: {str(e)}]"
+            log_interaction(user_message, response, {"history": history})
+            update_knowledge(user_message, response)
+            return {"response": response}
     else:
         # HARD FAIL: If not realistic mode, return error
         from fastapi import HTTPException
-        raise HTTPException(status_code=501, detail="AI backend is not enabled. Set up Groq/OpenAI and use realistic mode.")
+        response = "AI backend is not enabled. Set up Groq/OpenAI and use realistic mode."
+        log_interaction(user_message, response, {"history": history})
+        update_knowledge(user_message, response)
+        raise HTTPException(status_code=501, detail=response)
 
 # Voice-to-text (mock)
 @app.post("/api/transcribe")
@@ -184,5 +228,4 @@ def admin_stats():
 def live_feed():
     return StreamingResponse(io.StringIO("Live data stream..."), media_type="text/plain")
 
-if __name__ == "__main__":
-    uvicorn.run("server:app", host="0.0.0.0", port=8001, reload=True)
+## Removed __main__ block for uvicorn compatibility
