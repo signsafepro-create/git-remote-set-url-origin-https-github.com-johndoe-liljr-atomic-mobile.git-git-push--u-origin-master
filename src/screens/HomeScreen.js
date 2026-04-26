@@ -1,6 +1,7 @@
 import React from 'react';
 import NeuralBrain from '../components/NeuralBrain';
 import HomeVoiceControl from '../components/HomeVoiceControl';
+import UpdateButton from '../components/UpdateButton';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 
@@ -9,12 +10,16 @@ export default function HomeScreen({ navigation }) {
     <View style={styles.container}>
       <NeuralBrain />
 
+
       <Text style={styles.logo}>LIL JR 2.0</Text>
       <Text style={styles.tagline}>Your autonomous best friend.</Text>
       <Text style={styles.tagline2}>Never sleeps. Never forgets. Always hustles.</Text>
 
       {/* Voice Control UI embedded for instant access */}
       <HomeVoiceControl />
+
+      {/* Update Button for OTA updates */}
+      <UpdateButton />
 
 
       <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Main', { screen: 'Voice' })}>
