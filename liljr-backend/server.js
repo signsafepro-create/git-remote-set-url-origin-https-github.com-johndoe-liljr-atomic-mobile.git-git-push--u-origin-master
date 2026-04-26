@@ -569,7 +569,7 @@ app.post('/architect/add-helper', async (req, res) => {
   res.json({ added: true, name, service_type });
 });
 
-// Stripe payment endpoint removed for personal build
+// Stripe/payment endpoints are disabled for this build (code available in backup if needed)
 
 app.post('/teach', async (req, res) => {
   const { topic, question } = req.body;

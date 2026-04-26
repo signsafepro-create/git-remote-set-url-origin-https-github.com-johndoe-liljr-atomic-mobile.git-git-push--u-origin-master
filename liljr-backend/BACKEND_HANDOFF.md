@@ -4,10 +4,14 @@ liljr-backend/
 ├── package.json          # Dependencies & scripts
 ├── package-lock.json     # Lockfile
 └── server.js             # Main Express server (API)
+
 GROQ_API_KEY=your_groq_key
 ARCHITECT_SECRET=your_secret
 DATABASE_URL=your_postgres_url
 PORT=3000
+
+# Stripe/payment disabled for this build. No Stripe key needed.
+
 # Install dependencies
 cd liljr-backend
 npm install

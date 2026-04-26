@@ -7,7 +7,7 @@ export const ENDPOINTS = {
   stats: '/stats',
   chat: '/chat',
   pricing: '/pricing',
-  checkout: '/create-checkout',
+  // checkout: '/create-checkout',
   voiceAuth: '/voice-auth',
   voiceCommand: '/voice-command'
 };

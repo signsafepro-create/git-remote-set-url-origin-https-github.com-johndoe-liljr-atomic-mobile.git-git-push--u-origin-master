@@ -14,6 +14,8 @@ from fastapi import APIRouter
 import subprocess
 import json
 from datetime import datetime
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse, HTMLResponse
 
 # Load environment variables
 load_dotenv()
@@ -23,7 +25,21 @@ load_dotenv()
 MEMORY_FILE = "liljr_memory.jsonl"
 KNOWLEDGE_FILE = "liljr_knowledge.json"
 
+
 app = FastAPI()
+
+# Serve static frontend (dist/) at root
+frontend_dir = os.path.join(os.path.dirname(__file__), 'dist')
+if os.path.exists(frontend_dir):
+    app.mount("/assets", StaticFiles(directory=os.path.join(frontend_dir, 'assets')), name="assets")
+    app.mount("/_expo", StaticFiles(directory=os.path.join(frontend_dir, '_expo')), name="_expo")
+
+@app.get("/", response_class=HTMLResponse)
+async def serve_index():
+    index_path = os.path.join(frontend_dir, 'index.html')
+    if os.path.exists(index_path):
+        return FileResponse(index_path)
+    return HTMLResponse("<h1>Frontend not found</h1>", status_code=404)
 
 # Allow CORS for mobile app
 app.add_middleware(

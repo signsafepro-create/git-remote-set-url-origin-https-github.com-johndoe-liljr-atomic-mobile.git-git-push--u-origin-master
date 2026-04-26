@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, ScrollView, Alert, TextInput } from 'react-native';
-import { api } from '../api/client';
 import { TIERS as TIER_CONFIG } from '../config/api';
 import TierCard from '../components/TierCard';
 
@@ -10,21 +9,9 @@ export default function PricingScreen({ navigation }) {
   const [loading, setLoading] = useState(null);
   const [email, setEmail] = useState('');
 
-  const activateTier = async (tier) => {
-    if (!email.includes('@')) {
-      Alert.alert('Email required', 'Please enter a valid email to activate.');
-      return;
-    }
-
-    setLoading(tier.key);
-    try {
-      const { url } = await api.createCheckout(tier.key, email);
-      Alert.alert('Checkout ready', url || 'Checkout session created.');
-    } catch {
-      Alert.alert('Unavailable', 'Checkout endpoint is not active yet on this backend.');
-    } finally {
-      setLoading(null);
-    }
+  // Payment temporarily disabled. Show info only.
+  const activateTier = (tier) => {
+    Alert.alert('Upgrade Unavailable', 'Payment/upgrade is currently disabled. Contact support for access.');
   };
 
   return (

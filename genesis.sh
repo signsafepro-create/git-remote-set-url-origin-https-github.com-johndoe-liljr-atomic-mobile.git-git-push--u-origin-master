@@ -108,10 +108,9 @@ SAFETY AND TRUST RULES
 - Instructor override always available.
 - Audit trail for institution admins.
 
+
 DEPLOYMENT TARGETS
-- Backend API: Railway
-- Mobile app: Expo EAS
-- Web dashboard: Vercel or Railway static
+- Standalone Python app (serves API and frontend)
 - Database: Postgres
 - Cache/queues: Redis (optional for scale)
 
@@ -164,15 +163,11 @@ PHASE 4: WORLD READY (Week 7+)
 - Cohort onboarding playbooks
 - A/B test matching and explanation styles
 
+
 WINDOWS FIRST STARTUP COMMANDS
 From project root:
-1) npm install
-2) npm run start
-
-Backend (if in separate folder):
-1) npm install
-2) set GROQ_KEY=your_key
-3) node server.js
+1) pip install -r requirements.txt
+2) python server.py  (or: uvicorn server:app --host 0.0.0.0 --port 8000)
 
 CHECKLIST FOR AGENT HANDOFF
 - Confirm environment tools: node, npm, git
