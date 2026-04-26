@@ -29,7 +29,6 @@ liljr-backend/
 ## 🔑 Environment Variables (.env example)
 ```env
 GROQ_API_KEY=your_groq_key
-ARCHITECT_SECRET=your_secret
 DATABASE_URL=your_postgres_url
 PORT=3000
 ```
@@ -70,12 +69,12 @@ node server.js
 | /health                | GET    | Health check                                |
 | /mobile-scan           | POST   | Demo scan endpoint (for mobile)             |
 
-*No payment endpoints (Stripe) in personal build.*
 
 ## 🧩 Integration Points
 - Frontend calls `/flow/touch` for chat/AI.
 - `/health` for health check.
 - Admin endpoints require `x-architect-key` header with `ARCHITECT_SECRET`.
+*No payment endpoints (Stripe) in personal build.*
 
 ## ⚠️ Special Notes
 - Database tables auto-create on startup (PostgreSQL required).
