@@ -9,6 +9,8 @@ import os
 import io
 import uvicorn
 import requests
+from fastapi import APIRouter
+import subprocess
 
 # Load environment variables
 load_dotenv()
@@ -107,7 +109,35 @@ async def voice_auth(phrase: str = Form(...)):
 def pricing():
     return {"tiers": ["Free", "Student", "Pro", "Enterprise", "Custom"]}
 
+# --- Voice Command Device Control API ---
+router = APIRouter()
 
+@router.post("/api/voice-command")
+async def handle_voice_command(request: Request):
+    data = await request.json()
+    command_text = data.get("command", "").lower()
+    result = ""
+    try:
+        # Example: open app
+        if "open" in command_text:
+            app_name = command_text.split("open")[-1].strip()
+            subprocess.run([app_name], check=True)
+            result = f"Opened {app_name}"
+        # Example: send SMS
+        elif "sms" in command_text:
+            # Integrate with SMS API or system here
+            result = "SMS command received"
+        # Example: make call
+        elif "call" in command_text:
+            # Integrate with phone/call API here
+            result = "Call command received"
+        else:
+            result = f"Command received: {command_text}"
+    except Exception as e:
+        result = f"Error: {str(e)}"
+    return {"result": result}
+
+app.include_router(router)
 
 # Public brain stats (mock)
 @app.get("/api/stats")

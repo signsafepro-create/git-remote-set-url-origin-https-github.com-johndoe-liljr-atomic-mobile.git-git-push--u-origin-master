@@ -21,6 +21,7 @@ export default function AppNavigator() {
     >
       <Tab.Screen name="Chat" component={ChatScreen} options={{ tabBarIcon: () => <Text>💬</Text> }} />
       <Tab.Screen name="Voice" component={require('../screens/VoiceChatScreen').default} options={{ tabBarIcon: () => <Text>🎤</Text> }} />
+      <Tab.Screen name="Control" component={require('../screens/VoiceControlScreen').default} options={{ tabBarIcon: () => <Text>🛠️</Text> }} />
       <Tab.Screen name="Pricing" component={PricingScreen} options={{ tabBarIcon: () => <Text>💎</Text> }} />
       <Tab.Screen name="Brain" component={BrainScreen} options={{ tabBarIcon: () => <Text>🧠</Text> }} />
       <Tab.Screen name="Profile" component={ProfileScreen} options={{ tabBarIcon: () => <Text>👤</Text> }} />
