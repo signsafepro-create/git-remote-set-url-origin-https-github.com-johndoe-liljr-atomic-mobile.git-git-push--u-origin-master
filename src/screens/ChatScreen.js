@@ -82,7 +82,7 @@ export default function ChatScreen({ navigation }) {
       const errorMsg = {
         id: generateId(),
         role: 'assistant',
-        content: 'My neural pathways are congested right now. Try again in a sec.',
+        content: 'Sorry, I could not process your request. Please try again.',
         timestamp: Date.now()
       };
       setMessages((prev) => [...prev, errorMsg]);
