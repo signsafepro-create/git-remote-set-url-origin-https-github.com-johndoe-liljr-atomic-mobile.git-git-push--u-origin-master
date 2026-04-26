@@ -85,9 +85,9 @@ async def chat(request: Request):
         except Exception as e:
             return {"response": f"[Realistic mode error: {str(e)}]"}
     else:
-        # Default mock response with memory
-        context_str = '\n'.join([f"{m['role']}: {m['content']}" for m in conversation])
-        return {"response": f"Lil Jr says (memory):\n{context_str}"}
+        # HARD FAIL: If not realistic mode, return error
+        from fastapi import HTTPException
+        raise HTTPException(status_code=501, detail="AI backend is not enabled. Set up Groq/OpenAI and use realistic mode.")
 
 # Voice-to-text (mock)
 @app.post("/api/transcribe")
