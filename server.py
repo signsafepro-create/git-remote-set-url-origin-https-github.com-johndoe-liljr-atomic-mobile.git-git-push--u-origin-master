@@ -34,10 +34,21 @@ brain_stats = {
     "live_feed": []
 }
 
+
 # Health check
 @app.get("/api/")
 def health():
     return {"status": "ok"}
+
+# Endpoint to write code to a file
+@app.post("/api/write_code")
+async def write_code(request: Request):
+    data = await request.json()
+    code = data.get("code", "")
+    filename = data.get("filename", "generated_code.py")
+    with open(filename, "w", encoding="utf-8") as f:
+        f.write(code)
+    return {"status": "success", "filename": filename}
 
 
 # AI chat endpoint (realistic mode)
