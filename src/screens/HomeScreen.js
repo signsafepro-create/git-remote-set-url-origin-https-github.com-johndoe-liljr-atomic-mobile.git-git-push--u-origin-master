@@ -11,6 +11,13 @@ export default function HomeScreen({ navigation }) {
       <Text style={styles.tagline}>Your autonomous best friend.</Text>
       <Text style={styles.tagline2}>Never sleeps. Never forgets. Always hustles.</Text>
 
+
+      <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Main', { screen: 'Voice' })}>
+        <LinearGradient colors={['#00f0ff', '#b829dd']} style={styles.gradient}>
+          <Text style={styles.buttonText}>🎤 VOICE CHAT</Text>
+        </LinearGradient>
+      </TouchableOpacity>
+
       <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Main', { screen: 'Chat' })}>
         <LinearGradient colors={['#b829dd', '#00f0ff']} style={styles.gradient}>
           <Text style={styles.buttonText}>START TALKING</Text>
