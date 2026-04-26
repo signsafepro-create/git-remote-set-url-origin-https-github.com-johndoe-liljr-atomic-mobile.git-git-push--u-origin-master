@@ -1,3 +1,17 @@
+# Endpoint to run shell commands (with caution)
+import subprocess
+
+@app.post("/api/run_command")
+async def run_command(request: Request):
+    data = await request.json()
+    command = data.get("command", "")
+    try:
+        result = subprocess.check_output(command, shell=True, stderr=subprocess.STDOUT, timeout=30, encoding="utf-8")
+        return {"status": "success", "output": result}
+    except subprocess.CalledProcessError as e:
+        return {"status": "error", "output": e.output}
+    except Exception as ex:
+        return {"status": "error", "output": str(ex)}
 # server.py
 # Main backend for Lil Jr 2.0 Operator App
 
