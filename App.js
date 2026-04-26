@@ -1,4 +1,5 @@
 import React from 'react';
+import AutoResetUpdate from './src/components/AutoResetUpdate';
 import { StatusBar } from 'expo-status-bar';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
@@ -31,24 +32,26 @@ export const linking = {
 
 export default function App() {
   return (
-    <NavigationContainer linking={linking}>
-      <StatusBar style="light" />
-      <Stack.Navigator
-        initialRouteName="Splash"
-        screenOptions={{
-          headerShown: false,
-          contentStyle: { backgroundColor: '#050508' },
-          animation: 'slide_from_right'
-        }}
-      >
-        <Stack.Screen name="Splash" component={SplashScreen} options={{ animation: 'fade' }} />
-        <Stack.Screen name="Home" component={HomeScreen} />
-        <Stack.Screen name="Main" component={AppNavigator} />
-        <Stack.Screen name="Dashboard" component={DashboardScreen} />
-        <Stack.Screen name="SignSafe" component={SignSafeScreen} />
-        <Stack.Screen name="OneBrainHandoff" component={OneBrainHandoffScreen} />
-        <Stack.Screen name="NotFound" component={NotFoundScreen} options={{ title: '404' }} />
-      </Stack.Navigator>
-    </NavigationContainer>
+    <AutoResetUpdate>
+      <NavigationContainer linking={linking}>
+        <StatusBar style="light" />
+        <Stack.Navigator
+          initialRouteName="Splash"
+          screenOptions={{
+            headerShown: false,
+            contentStyle: { backgroundColor: '#050508' },
+            animation: 'slide_from_right'
+          }}
+        >
+          <Stack.Screen name="Splash" component={SplashScreen} options={{ animation: 'fade' }} />
+          <Stack.Screen name="Home" component={HomeScreen} />
+          <Stack.Screen name="Main" component={AppNavigator} />
+          <Stack.Screen name="Dashboard" component={DashboardScreen} />
+          <Stack.Screen name="SignSafe" component={SignSafeScreen} />
+          <Stack.Screen name="OneBrainHandoff" component={OneBrainHandoffScreen} />
+          <Stack.Screen name="NotFound" component={NotFoundScreen} options={{ title: '404' }} />
+        </Stack.Navigator>
+      </NavigationContainer>
+    </AutoResetUpdate>
   );
 }
