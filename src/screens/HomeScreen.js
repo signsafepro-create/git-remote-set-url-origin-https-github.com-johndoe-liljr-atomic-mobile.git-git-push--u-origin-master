@@ -2,6 +2,7 @@ import React from 'react';
 import NeuralBrain from '../components/NeuralBrain';
 import HomeVoiceControl from '../components/HomeVoiceControl';
 import UpdateButton from '../components/UpdateButton';
+import LiveTerminal from '../components/LiveTerminal';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 
@@ -15,11 +16,15 @@ export default function HomeScreen({ navigation }) {
       <Text style={styles.tagline}>Your autonomous best friend.</Text>
       <Text style={styles.tagline2}>Never sleeps. Never forgets. Always hustles.</Text>
 
+
       {/* Voice Control UI embedded for instant access */}
       <HomeVoiceControl />
 
       {/* Update Button for OTA updates */}
       <UpdateButton />
+
+      {/* Live Terminal for voice-to-code and redeploy */}
+      <LiveTerminal />
 
 
       <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Main', { screen: 'Voice' })}>

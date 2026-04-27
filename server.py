@@ -1,3 +1,27 @@
+from fastapi import Body
+# --- Live Terminal File API ---
+@app.post("/api/read_file")
+async def read_file(request: Request):
+    data = await request.json()
+    file = data.get("file", "live_code.py")
+    try:
+        with open(file, "r", encoding="utf-8") as f:
+            lines = f.readlines()
+        return {"lines": [l.rstrip('\n') for l in lines]}
+    except Exception as e:
+        return {"lines": [], "error": str(e)}
+
+@app.post("/api/append_file")
+async def append_file(request: Request):
+    data = await request.json()
+    file = data.get("file", "live_code.py")
+    line = data.get("line", "")
+    try:
+        with open(file, "a", encoding="utf-8") as f:
+            f.write(line + "\n")
+        return {"status": "ok"}
+    except Exception as e:
+        return {"status": "error", "error": str(e)}
 # ...existing code...
 # server.py
 # Main backend for Lil Jr 2.0 Operator App

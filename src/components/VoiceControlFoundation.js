@@ -33,15 +33,37 @@ export default function VoiceControlFoundation({ backendUrl }) {
     recognitionRef.current.stop();
   };
 
+  // Send transcript as shell command to backend for execution
+  // If the command is 'update now', trigger the update workflow
   const sendToBackend = async (command) => {
+    if (command.trim().toLowerCase() === 'update now') {
+      setTranscript(t => t + '\nTriggering update...');
+      try {
+        // Dynamically import expo-updates and trigger update
+        const Updates = await import('expo-updates');
+        const update = await Updates.checkForUpdateAsync();
+        if (update.isAvailable) {
+          await Updates.fetchUpdateAsync();
+          setTranscript(t => t + '\nUpdate downloaded! Restarting...');
+          await Updates.reloadAsync();
+        } else {
+          setTranscript(t => t + '\nApp is up to date.');
+        }
+      } catch (e) {
+        setTranscript(t => t + '\nUpdate failed: ' + e.message);
+      }
+      return;
+    }
     try {
-      await fetch(backendUrl + '/api/voice-command', {
+      const res = await fetch(backendUrl + '/api/run_command', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ command })
       });
+      const data = await res.json();
+      setTranscript(t => t + '\n' + (data.output || data.result || JSON.stringify(data)));
     } catch (e) {
-      // Optionally handle error
+      setTranscript(t => t + '\nError: ' + e.message);
     }
   };
 
