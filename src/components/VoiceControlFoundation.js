@@ -34,12 +34,12 @@ export default function VoiceControlFoundation({ backendUrl }) {
   };
 
   // Send transcript as shell command to backend for execution
-  // If the command is 'update now', trigger the update workflow
+  // Accept both voice and text commands for automation
   const sendToBackend = async (command) => {
-    if (command.trim().toLowerCase() === 'update now') {
+    const cmd = command.trim().toLowerCase();
+    if (cmd === 'update now') {
       setTranscript(t => t + '\nTriggering update...');
       try {
-        // Dynamically import expo-updates and trigger update
         const Updates = await import('expo-updates');
         const update = await Updates.checkForUpdateAsync();
         if (update.isAvailable) {
@@ -54,11 +54,51 @@ export default function VoiceControlFoundation({ backendUrl }) {
       }
       return;
     }
+    // Git push automation
+    if (cmd === 'push code') {
+      setTranscript(t => t + '\nPushing code to GitHub...');
+      await runBackendCommand('git add . && git commit -m "Auto: new code from voice/text" && git push origin master');
+      return;
+    }
+    // Git pull automation
+    if (cmd === 'pull code') {
+      setTranscript(t => t + '\nPulling latest code from GitHub...');
+      await runBackendCommand('git pull origin master');
+      return;
+    }
+    // Redeploy automation
+    if (cmd === 'deploy now') {
+      setTranscript(t => t + '\nRedeploying Lil Jr...');
+      await runBackendCommand('systemctl restart liljr');
+      return;
+    }
+    // Full cycle automation
+    if (cmd === 'full cycle') {
+      setTranscript(t => t + '\nRunning full cycle: push, pull, deploy...');
+      await runBackendCommand('git add . && git commit -m "Auto: full cycle" && git push origin master && git pull origin master && systemctl restart liljr');
+      return;
+    }
+    // Default: run as shell command
     try {
       const res = await fetch(backendUrl + '/api/run_command', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ command })
+      });
+      const data = await res.json();
+      setTranscript(t => t + '\n' + (data.output || data.result || JSON.stringify(data)));
+    } catch (e) {
+      setTranscript(t => t + '\nError: ' + e.message);
+    }
+  };
+
+  // Helper to run backend shell commands
+  const runBackendCommand = async (shellCmd) => {
+    try {
+      const res = await fetch(backendUrl + '/api/run_command', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ command: shellCmd })
       });
       const data = await res.json();
       setTranscript(t => t + '\n' + (data.output || data.result || JSON.stringify(data)));
