@@ -1,4 +1,26 @@
-from fastapi import Body
+from fastapi import Body, FastAPI, Request, UploadFile, File, Form, HTTPException, WebSocket
+from fastapi.responses import JSONResponse, StreamingResponse, FileResponse, HTMLResponse
+from fastapi.middleware.cors import CORSMiddleware
+from dotenv import load_dotenv
+import os
+import io
+import uvicorn
+import requests
+from fastapi import APIRouter
+import subprocess
+import json
+from datetime import datetime
+from fastapi.staticfiles import StaticFiles
+
+# Load environment variables
+load_dotenv()
+
+# Persistent memory file
+MEMORY_FILE = "liljr_memory.jsonl"
+KNOWLEDGE_FILE = "liljr_knowledge.json"
+
+app = FastAPI()
+
 # --- Live Terminal File API ---
 @app.post("/api/read_file")
 async def read_file(request: Request):
@@ -22,35 +44,6 @@ async def append_file(request: Request):
         return {"status": "ok"}
     except Exception as e:
         return {"status": "error", "error": str(e)}
-# ...existing code...
-# server.py
-# Main backend for Lil Jr 2.0 Operator App
-
-from fastapi import FastAPI, Request, UploadFile, File, Form, HTTPException, WebSocket
-from fastapi.responses import JSONResponse, StreamingResponse
-from fastapi.middleware.cors import CORSMiddleware
-from dotenv import load_dotenv
-import os
-import io
-import uvicorn
-import requests
-from fastapi import APIRouter
-import subprocess
-import json
-from datetime import datetime
-from fastapi.staticfiles import StaticFiles
-from fastapi.responses import FileResponse, HTMLResponse
-
-# Load environment variables
-load_dotenv()
-
-
-# Persistent memory file
-MEMORY_FILE = "liljr_memory.jsonl"
-KNOWLEDGE_FILE = "liljr_knowledge.json"
-
-
-app = FastAPI()
 
 # Serve static frontend (dist/) at root
 frontend_dir = os.path.join(os.path.dirname(__file__), 'dist')
