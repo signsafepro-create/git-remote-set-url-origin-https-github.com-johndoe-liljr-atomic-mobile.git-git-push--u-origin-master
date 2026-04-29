@@ -1,6 +1,15 @@
 
-// Set your Railway backend URL here
-export const API_BASE_URL = 'https://liljr-prod-production.up.railway.app'; // Railway only
+
+// Set your backend URL here (local/server/phone)
+// Try to load from environment or fallback to local server
+
+// Set to your phone/server IP for direct connection
+let API_BASE_URL = 'http://192.168.2.51:8000'; // Phone IP
+if (typeof process !== 'undefined' && process.env && process.env.LILJR_API_URL) {
+  API_BASE_URL = process.env.LILJR_API_URL;
+}
+// For React Native, you can also set this via a config file or UI
+export { API_BASE_URL };
 
 export const ENDPOINTS = {
   health: '/api/',

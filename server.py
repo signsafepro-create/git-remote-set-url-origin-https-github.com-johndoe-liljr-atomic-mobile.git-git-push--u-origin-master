@@ -1,8 +1,10 @@
+
 from fastapi import Body, FastAPI, Request, UploadFile, File, Form, HTTPException, WebSocket
 from fastapi.responses import JSONResponse, StreamingResponse, FileResponse, HTMLResponse
 from fastapi.middleware.cors import CORSMiddleware
 from dotenv import load_dotenv
 import os
+from typing import Optional
 import io
 import uvicorn
 import requests
@@ -12,14 +14,98 @@ import json
 from datetime import datetime
 from fastapi.staticfiles import StaticFiles
 
+
 # Load environment variables
 load_dotenv()
+
+# --- SUPER AUTONOMY MODE ---
+SUPER_AUTONOMY = os.getenv("SUPER_AUTONOMY", "false").lower() == "true"
+
+# Local knowledge base file
+KNOWLEDGE_BASE_FILE = "liljr_knowledge_base.jsonl"
+
+def save_to_knowledge_base(entry: dict):
+    with open(KNOWLEDGE_BASE_FILE, "a", encoding="utf-8") as f:
+        f.write(json.dumps(entry) + "\n")
+
+# Plugin/extension loader (scaffold)
+PLUGINS_DIR = "plugins"
+if not os.path.exists(PLUGINS_DIR):
+    os.makedirs(PLUGINS_DIR)
+
+def load_plugins():
+    plugins = []
+    for fname in os.listdir(PLUGINS_DIR):
+        if fname.endswith(".py"):
+            try:
+                import importlib.util
+                spec = importlib.util.spec_from_file_location(fname[:-3], os.path.join(PLUGINS_DIR, fname))
+                mod = importlib.util.module_from_spec(spec)
+                spec.loader.exec_module(mod)
+                plugins.append(mod)
+            except Exception as e:
+                print(f"Failed to load plugin {fname}: {e}")
+    return plugins
+
+PLUGINS = load_plugins()
 
 # Persistent memory file
 MEMORY_FILE = "liljr_memory.jsonl"
 KNOWLEDGE_FILE = "liljr_knowledge.json"
 
+
+# Import and include the GitHub bridge router
+from src.api import github_bridge
+
+
 app = FastAPI()
+app.include_router(github_bridge.router)
+
+# --- SUPER AUTONOMY ENDPOINTS ---
+@app.post("/api/super_autonomy/build_deploy")
+async def build_and_deploy(request: Request):
+    if not SUPER_AUTONOMY:
+        return {"error": "Super autonomy mode is not enabled."}
+    data = await request.json()
+    # Example: run build/deploy scripts (customize as needed)
+    try:
+        result = subprocess.run(["sh", "genesis.sh"], capture_output=True, text=True)
+        save_to_knowledge_base({"action": "build_deploy", "output": result.stdout, "error": result.stderr})
+        return {"status": "ok", "output": result.stdout, "error": result.stderr}
+    except Exception as e:
+        return {"status": "error", "error": str(e)}
+
+@app.post("/api/super_autonomy/learn")
+async def learn_knowledge(request: Request):
+    if not SUPER_AUTONOMY:
+        return {"error": "Super autonomy mode is not enabled."}
+    data = await request.json()
+    entry = data.get("entry", {})
+    save_to_knowledge_base(entry)
+    return {"status": "ok"}
+
+@app.get("/api/super_autonomy/plugins")
+async def list_plugins():
+    if not SUPER_AUTONOMY:
+        return {"error": "Super autonomy mode is not enabled."}
+    return {"plugins": [p.__name__ for p in PLUGINS]}
+
+@app.post("/api/super_autonomy/run_plugin")
+async def run_plugin(request: Request):
+    if not SUPER_AUTONOMY:
+        return {"error": "Super autonomy mode is not enabled."}
+    data = await request.json()
+    plugin_name = data.get("plugin")
+    args = data.get("args", {})
+    for p in PLUGINS:
+        if p.__name__ == plugin_name and hasattr(p, "run"):
+            try:
+                result = p.run(**args)
+                save_to_knowledge_base({"action": "run_plugin", "plugin": plugin_name, "result": result})
+                return {"status": "ok", "result": result}
+            except Exception as e:
+                return {"status": "error", "error": str(e)}
+    return {"error": "Plugin not found or missing 'run' method."}
 
 # --- Live Terminal File API ---
 @app.post("/api/read_file")
