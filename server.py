@@ -1,7 +1,47 @@
-
+# --- FASTAPI IMPORTS AND APP INIT ---
 from fastapi import Body, FastAPI, Request, UploadFile, File, Form, HTTPException, WebSocket
 from fastapi.responses import JSONResponse, StreamingResponse, FileResponse, HTMLResponse
 from fastapi.middleware.cors import CORSMiddleware
+import subprocess
+
+app = FastAPI()
+
+# --- SELF-DIAGNOSE, SELF-FIX, AND TERMINAL COMMAND ENDPOINTS ---
+@app.post("/api/self_diagnose")
+async def self_diagnose(request: Request):
+    data = await request.json()
+    file = data.get("file")
+    # Example: check for syntax errors (Python)
+    try:
+        with open(file, "r", encoding="utf-8") as f:
+            code = f.read()
+        compile(code, file, "exec")
+        return {"status": "ok", "message": "No syntax errors found."}
+    except Exception as e:
+        return {"status": "error", "message": str(e)}
+
+@app.post("/api/self_fix")
+async def self_fix(request: Request):
+    data = await request.json()
+    file = data.get("file")
+    fix_code = data.get("fix_code")
+    # Save the fix (after your approval)
+    try:
+        with open(file, "w", encoding="utf-8") as f:
+            f.write(fix_code)
+        return {"status": "ok", "message": f"{file} updated."}
+    except Exception as e:
+        return {"status": "error", "message": str(e)}
+
+@app.post("/api/run_terminal")
+async def run_terminal(request: Request):
+    data = await request.json()
+    command = data.get("command")
+    try:
+        result = subprocess.check_output(command, shell=True, stderr=subprocess.STDOUT, timeout=30, encoding="utf-8")
+        return {"status": "success", "output": result}
+    except Exception as e:
+        return {"status": "error", "output": str(e)}
 from dotenv import load_dotenv
 import os
 from typing import Optional
