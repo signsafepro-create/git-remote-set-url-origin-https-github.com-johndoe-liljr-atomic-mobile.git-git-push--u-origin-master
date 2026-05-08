@@ -2,9 +2,8 @@ require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const { Pool } = require('pg');
-// Stripe removed for personal build
+const Stripe = require('stripe');
 const Groq = require('groq-sdk');
-const { checkHealth } = require('./watchdog');
 
 const app = express();
 app.use(cors());
@@ -79,6 +78,7 @@ const initDB = async () => {
 class FlowingMind {
   constructor() {
     this.groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
+    this.stripe = Stripe(process.env.STRIPE_SECRET_KEY);
     this.here = { name: 'Sault Ste. Marie', code: 'P6B 3P8', reach: 50 };
     this.alerts = [];
   }
@@ -502,11 +502,7 @@ app.post('/flow/touch', async (req, res) => {
 });
 
 app.get('/flow/dreaming', async (req, res) => {
-  const ownerUnlock = req.headers['x-owner-unlock'] === process.env.OWNER_UNLOCK_PHRASE;
-  if (
-    req.headers['x-architect-key'] !== process.env.ARCHITECT_SECRET &&
-    !ownerUnlock
-  ) {
+  if (req.headers['x-architect-key'] !== process.env.ARCHITECT_SECRET) {
     return res.status(403).json({ locked: true });
   }
 
@@ -532,11 +528,7 @@ app.get('/flow/dreaming', async (req, res) => {
 });
 
 app.post('/architect/add-thing', async (req, res) => {
-  const ownerUnlock = req.headers['x-owner-unlock'] === process.env.OWNER_UNLOCK_PHRASE;
-  if (
-    req.headers['x-architect-key'] !== process.env.ARCHITECT_SECRET &&
-    !ownerUnlock
-  ) {
+  if (req.headers['x-architect-key'] !== process.env.ARCHITECT_SECRET) {
     return res.status(403).json({ error: 'Unauthorized' });
   }
 
@@ -551,11 +543,7 @@ app.post('/architect/add-thing', async (req, res) => {
 });
 
 app.post('/architect/add-helper', async (req, res) => {
-  const ownerUnlock = req.headers['x-owner-unlock'] === process.env.OWNER_UNLOCK_PHRASE;
-  if (
-    req.headers['x-architect-key'] !== process.env.ARCHITECT_SECRET &&
-    !ownerUnlock
-  ) {
+  if (req.headers['x-architect-key'] !== process.env.ARCHITECT_SECRET) {
     return res.status(403).json({ error: 'Unauthorized' });
   }
 
@@ -569,7 +557,28 @@ app.post('/architect/add-helper', async (req, res) => {
   res.json({ added: true, name, service_type });
 });
 
-// Stripe/payment endpoints are disabled for this build (code available in backup if needed)
+app.post('/create-payment-intent', async (req, res) => {
+  const { amount, soul_id, items } = req.body;
+
+  try {
+    const paymentIntent = await mind.stripe.paymentIntents.create({
+      amount: Math.round(amount * 100),
+      currency: 'cad',
+      metadata: {
+        soul_id,
+        items: JSON.stringify(items),
+        location: 'Sault Ste. Marie'
+      }
+    });
+
+    res.json({
+      client_secret: paymentIntent.client_secret,
+      payment_intent_id: paymentIntent.id
+    });
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+});
 
 app.post('/teach', async (req, res) => {
   const { topic, question } = req.body;
@@ -623,6 +632,4 @@ initDB().then(() => {
   app.listen(PORT, () => {
     console.log('Flowing Mind Online on port ' + PORT);
   });
-  // Start self-monitoring watchdog
-  checkHealth();
 });

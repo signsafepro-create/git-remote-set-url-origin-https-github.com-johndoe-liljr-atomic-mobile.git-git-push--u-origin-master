@@ -43,8 +43,9 @@ export const api = {
     return this.post('/chat', { message, userId, tier, domain: 'mobile', history });
   },
 
-
-  // createCheckout removed (Stripe/payment disabled)
+  async createCheckout(tier, email) {
+    return this.post('/create-checkout', { tier, email });
+  },
 
   async getBrainStatus() {
     return this.get('/stats');
